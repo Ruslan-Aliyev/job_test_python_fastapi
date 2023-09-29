@@ -151,3 +151,7 @@ Complete migration file, then run: `alembic upgrade head`
 Better to put sensitive credentials in a env file:
 - Generally: https://dev.to/jakewitcher/using-env-files-for-environment-variables-in-python-applications-55a1
 - In Alembic: https://github.com/sqlalchemy/alembic/discussions/1149
+
+## SQLAlchemy ORM
+
+- https://codevoweb.com/build-a-crud-app-with-fastapi-and-sqlalchemy

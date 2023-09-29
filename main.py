@@ -19,17 +19,21 @@ items = []
 async def read_items():
   return items
 
-@app.post("/items", response_model=Item)
+@app.get("/item/{item_id}", response_model=Item)
+async def read_item(item_id: int):
+  return items[item_id]
+
+@app.post("/item", response_model=Item)
 async def create_item(item: Item):
   items.append(item)
   return item
 
-@app.put("/items/{item_id}", response_model=Item)
+@app.patch("/item/{item_id}", response_model=Item)
 async def update_item(item_id: int, item: Item):
   items[item_id] = item
   return item
 
-@app.delete("/items/{item_id}")
+@app.delete("/item/{item_id}")
 async def delete_item(item_id: int):
   del items[item_id]
   return {"message": "Item deleted"}
