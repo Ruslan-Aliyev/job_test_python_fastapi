@@ -8,3 +8,7 @@ class Item(BaseModel):
 	id: int
 	name: str
 	price: float
+
+class TestBaseSchema(BaseModel):
+	id: int
+	thing: str

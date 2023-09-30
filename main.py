@@ -1,7 +1,7 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, Response
 from typing import List
 from auth import AuthHandler
-from schemas import AuthDetails, Item
+from schemas import AuthDetails, Item, TestBaseSchema
 from models import Test
 from database import get_db
 from sqlalchemy.orm import Session
@@ -23,21 +23,40 @@ async def read_item(item_id: int, db: Session = Depends(get_db)):
   return entry
 
 @app.post("/item")
-async def create_item(test: Test, db: Session = Depends(get_db)):
-  entry = Test(id=test.id, thing=test.thing)
+async def create_item(payload: TestBaseSchema, db: Session = Depends(get_db)): 
+  entry = Test(id=payload.id, thing=payload.thing)
   db.add(entry)
   db.commit()
   return entry
 
-@app.patch("/item/{item_id}", response_model=Item)
-async def update_item(item_id: int, item: Item):
-  items[item_id] = item
-  return item
+@app.patch("/item/{item_id}")
+async def update_item(item_id: int, payload: TestBaseSchema, db: Session = Depends(get_db)):
+  query = db.query(Test).filter(Test.id == item_id)
+  record = query.first()
+
+  if not record:
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'No record with this id: {item_id} found')
+  
+  entry = Test(id=payload.id, thing=payload.thing)
+  query.update(entry, synchronize_session=False)
+  db.commit()
+
+  return entry
 
 @app.delete("/item/{item_id}")
-async def delete_item(item_id: int):
-  del items[item_id]
-  return {"message": "Item deleted"}
+async def delete_item(item_id: int, db: Session = Depends(get_db)):
+  query = db.query(Test).filter(Test.id == item_id)
+  record = query.first()
+
+  if not record:
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'No record with this id: {item_id} found')
+
+  query.delete(synchronize_session=False)
+  db.commit()
+
+  return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
 
 
 
@@ -51,7 +70,6 @@ def register(auth_details: AuthDetails):
     'password': hashed_password    
   })
   return
-
 
 @app.post('/login')
 def login(auth_details: AuthDetails):
@@ -67,10 +85,10 @@ def login(auth_details: AuthDetails):
   return { 'token': token }
 
 
+
 @app.get('/unprotected')
 def unprotected():
   return { 'hello': 'world' }
-
 
 @app.get('/protected')
 def protected(username=Depends(auth_handler.auth_wrapper)):

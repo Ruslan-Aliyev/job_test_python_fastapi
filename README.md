@@ -156,3 +156,6 @@ Better to put sensitive credentials in a env file:
 
 - https://codevoweb.com/build-a-crud-app-with-fastapi-and-sqlalchemy
 - https://vegibit.com/interacting-with-a-database-using-sqlalchemy-crud-operations
+
+Note: FastAPI only accepts pydantic schemas for parameter types
+
