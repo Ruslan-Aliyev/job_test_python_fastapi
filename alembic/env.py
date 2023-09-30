@@ -69,11 +69,13 @@ def run_migrations_online() -> None:
 
     from sqlalchemy import create_engine
     from dotenv import load_dotenv
+    from pathlib import Path
     import re
     import os
 
-    load_dotenv()
-    
+    dotenv_path = Path(os.path.join(os.getcwd(), '.env'))
+    load_dotenv(dotenv_path=dotenv_path)
+
     url_tokens = {
         "DB_USER": os.getenv("DB_USER", ""),
         "DB_PASS": os.getenv("DB_PASS", ""),

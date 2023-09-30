@@ -112,6 +112,13 @@ https://apidog.com/blog/how-to-quickly-implement-crud-operations-with-fastapi/
 
 - https://youtu.be/xZnOoO3ImSY?si=THyasQvQ0qqv_9Bz
   - https://github.com/ianrufus/youtube/tree/main/fastapi-jwt-auth
+- Refresh: https://codevoweb.com/restful-api-with-python-fastapi-access-and-refresh-tokens
+
+### Potential problems
+
+**Problem 1:** AttributeError: module 'jwt' has no attribute 'encode'
+
+**Solution:** Use `pyjwt` instead of `jwt`
 
 ## With DB
 
@@ -146,6 +153,9 @@ In it, set up the connection string: `sqlalchemy.url = postgresql://${DB_USER}:$
 Create migration script: `alembic revision -m "create test table"`   
 Complete migration file, then run: `alembic upgrade head`   
 
+See migration history: `alembic history`   
+Rollback: `alembic downgrade -{n}`  
+
 ## ENV file
 
 Better to put sensitive credentials in a env file:
@@ -156,6 +166,7 @@ Better to put sensitive credentials in a env file:
 
 - https://codevoweb.com/build-a-crud-app-with-fastapi-and-sqlalchemy
 - https://vegibit.com/interacting-with-a-database-using-sqlalchemy-crud-operations
+- Auto-Increment Primary Key: https://itecnote.com/tecnote/how-to-create-postgresqls-sequences-in-alembic
 
 ### Potential problems
 

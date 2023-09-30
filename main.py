@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, status, Response
 from typing import List
 from auth import AuthHandler
-from schemas import AuthDetails, Item, TestBaseSchema
+from schemas import AuthDetails, TestBaseSchema
 from models import Test
 from database import get_db
 from sqlalchemy.orm import Session
@@ -10,7 +10,6 @@ app = FastAPI()
 
 auth_handler = AuthHandler()
 users = []
-items = []
 
 @app.get("/items")
 async def read_items(db: Session = Depends(get_db)):
@@ -58,8 +57,7 @@ async def delete_item(item_id: int, db: Session = Depends(get_db)):
 
 
 
-
-
+"""
 @app.post('/register', status_code=201)
 def register(auth_details: AuthDetails):
   if any(x['username'] == auth_details.username for x in users):
@@ -85,7 +83,6 @@ def login(auth_details: AuthDetails):
   return { 'token': token }
 
 
-
 @app.get('/unprotected')
 def unprotected():
   return { 'hello': 'world' }
@@ -93,3 +90,4 @@ def unprotected():
 @app.get('/protected')
 def protected(username=Depends(auth_handler.auth_wrapper)):
   return { 'name': username }
+"""
