@@ -37,7 +37,7 @@ async def update_item(item_id: int, payload: TestBaseSchema, db: Session = Depen
   if not record:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'No record with this id: {item_id} found')
   
-  entry = Test(id=payload.id, thing=payload.thing)
+  entry = payload.dict(exclude_unset=True)
   query.update(entry, synchronize_session=False)
   db.commit()
 
