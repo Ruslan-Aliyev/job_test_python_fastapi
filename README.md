@@ -155,3 +155,4 @@ Better to put sensitive credentials in a env file:
 ## SQLAlchemy ORM
 
 - https://codevoweb.com/build-a-crud-app-with-fastapi-and-sqlalchemy
+- https://vegibit.com/interacting-with-a-database-using-sqlalchemy-crud-operations

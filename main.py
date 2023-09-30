@@ -1,32 +1,33 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, status
 from typing import List
 from auth import AuthHandler
 from schemas import AuthDetails, Item
+from models import Test
+from database import get_db
+from sqlalchemy.orm import Session
 
 app = FastAPI()   
-
-"""
-@app.get("/") 
-async def main_route():     
-  return {"message": "Hey, It is me Goku"}
-"""
 
 auth_handler = AuthHandler()
 users = []
 items = []
 
-@app.get("/items", response_model=List[Item])
-async def read_items():
-  return items
+@app.get("/items")
+async def read_items(db: Session = Depends(get_db)):
+  entries = db.query(Test).all()
+  return entries
 
-@app.get("/item/{item_id}", response_model=Item)
-async def read_item(item_id: int):
-  return items[item_id]
+@app.get("/item/{item_id}")
+async def read_item(item_id: int, db: Session = Depends(get_db)):
+  entry = db.query(Test).filter(Test.id == item_id).first()
+  return entry
 
-@app.post("/item", response_model=Item)
-async def create_item(item: Item):
-  items.append(item)
-  return item
+@app.post("/item")
+async def create_item(test: Test, db: Session = Depends(get_db)):
+  entry = Test(id=test.id, thing=test.thing)
+  db.add(entry)
+  db.commit()
+  return entry
 
 @app.patch("/item/{item_id}", response_model=Item)
 async def update_item(item_id: int, item: Item):
