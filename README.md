@@ -1,3 +1,57 @@
+# Usage
+
+## Register (Create User)
+
+```
+curl --location 'http://127.0.0.1:8000/register' \
+--header 'Content-Type: application/json' \
+--data '{
+    "username": "testuser1",
+    "password": "testuser1",
+    "birthday": "1999-09-09"
+}'
+```
+
+## Login (Involving reading 1 user)
+
+```
+curl --location 'http://127.0.0.1:8000/login' \
+--header 'Content-Type: application/json' \
+--data '{
+    "username": "testuser1",
+    "password": "testuser1"
+}'
+```
+You will get a JWT token, username and user ID in return
+
+## View all users
+
+```
+curl --location 'http://127.0.0.1:8000/users' \
+--header 'Authorization: Bearer {JWT Token}'
+```
+
+## Edit an user
+
+```
+curl --location --request PATCH 'http://127.0.0.1:8000/user/2' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer {JWT Token}' \
+--data '{
+    "username": "ruslanabcde",
+    "password": "ruslanabcde",
+    "birthday": "1990-12-25"
+}'
+```
+
+## Delete an user
+
+```
+curl --location --request DELETE 'http://127.0.0.1:8000/user/2' \
+--header 'Authorization: Bearer {JWT Token}' \
+--data ''
+```
+
 # Setup the Database
 
 https://migueldoctor.medium.com/how-to-run-postgresql-pgadmin-in-3-steps-using-docker-d6fe06e47ca1
