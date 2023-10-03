@@ -1,40 +1,44 @@
 from fastapi import FastAPI, Depends, HTTPException, status, Response
 from typing import List
 from auth import AuthHandler
-from schemas import AuthDetails, TestBaseSchema
-from models import Test
+from schemas import AuthDetails, UserBaseSchema
+from models import User
 from database import get_db
 from sqlalchemy.orm import Session
 
 app = FastAPI()   
 
 auth_handler = AuthHandler()
-users = []
+"""users = []"""
 
-@app.get("/items")
-async def read_items(db: Session = Depends(get_db)):
-  entries = db.query(Test).all()
-  return entries
+@app.get("/users")
+async def read_users(db: Session = Depends(get_db)):
+  users = db.query(User).all()
+  return users
 
-@app.get("/item/{item_id}")
-async def read_item(item_id: int, db: Session = Depends(get_db)):
-  entry = db.query(Test).filter(Test.id == item_id).first()
-  return entry
+@app.get("/user/{id}")
+async def read_user(id: int, db: Session = Depends(get_db)):
+  user = db.query(User).filter(User.id == id).first()
 
-@app.post("/item")
-async def create_item(payload: TestBaseSchema, db: Session = Depends(get_db)): 
-  entry = Test(id=payload.id, thing=payload.thing)
-  db.add(entry)
+  if not user:
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'No user with this id: {id} found')
+  
+  return user
+
+@app.post("/user")
+async def create_user(payload: UserBaseSchema, db: Session = Depends(get_db)): 
+  user = User(username=payload.username, password=payload.password, birthday=payload.birthday)
+  db.add(user)
   db.commit()
-  return entry
+  return user
 
-@app.patch("/item/{item_id}")
-async def update_item(item_id: int, payload: TestBaseSchema, db: Session = Depends(get_db)):
-  query = db.query(Test).filter(Test.id == item_id)
+@app.patch("/user/{id}")
+async def update_item(id: int, payload: UserBaseSchema, db: Session = Depends(get_db)):
+  query = db.query(User).filter(User.id == id)
   record = query.first()
 
   if not record:
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'No record with this id: {item_id} found')
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'No record with this id: {id} found')
   
   entry = payload.dict(exclude_unset=True)
   query.update(entry, synchronize_session=False)
@@ -42,13 +46,13 @@ async def update_item(item_id: int, payload: TestBaseSchema, db: Session = Depen
 
   return entry
 
-@app.delete("/item/{item_id}")
-async def delete_item(item_id: int, db: Session = Depends(get_db)):
-  query = db.query(Test).filter(Test.id == item_id)
+@app.delete("/user/{id}")
+async def delete_user(id: int, db: Session = Depends(get_db)):
+  query = db.query(User).filter(User.id == id)
   record = query.first()
 
   if not record:
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'No record with this id: {item_id} found')
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'No record with this id: {id} found')
 
   query.delete(synchronize_session=False)
   db.commit()
